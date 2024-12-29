@@ -1,0 +1,50 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+
+//using CleanArchitecture.Razor.Application.Findings.DTOs;
+
+using AutoMapper;
+using EmploymentSystem.Application.Interfaces;
+using EmploymentSystem.Domain.Entities;
+using MediatR;
+using System.Threading.Tasks;
+using System.Threading;
+using EmploymentSystem.Application.DTOs;
+using System;
+using EmploymentSystem.Domain;
+using System.Linq;
+using EmploymentSystem.Domain.Entities.Vaccancy;
+
+namespace EmploymentSystem.Application.Commands
+{
+    public class AddVaccancyCommand : IRequest<VaccancyDto>
+    {
+        public AddVaccancyDto obj { get; set; }
+    }
+
+    public class AddVaccancyCommandHandler : IRequestHandler<AddVaccancyCommand, VaccancyDto>
+    {
+        private readonly IMapper _mapper;
+        private readonly IRepository<Vaccancy> _servicesRepository;
+
+
+        public AddVaccancyCommandHandler(
+            IRepository<Vaccancy> servicesRepository,
+            IMapper mapper
+            )
+        {
+            _servicesRepository = servicesRepository;
+            _mapper = mapper;
+        }
+        public async Task<VaccancyDto> Handle(AddVaccancyCommand request, CancellationToken cancellationToken)
+        {
+            var item = _mapper.Map<Vaccancy>(request.obj);
+            var result = _servicesRepository.InsertWithEntityReturn(item);
+            return _mapper.Map<VaccancyDto>(result);
+        }
+    }
+}
+
+
+
